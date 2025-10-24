@@ -1,59 +1,179 @@
-<!-- REPLACE START: index.html 首頁 -->
-<!doctype html><html lang="zh-Hant" class="no-js" data-theme="light">
+<!-- REPLACE START: index.html 首頁（已改為連到 contact.html，並為 Contact 區塊每張卡加入圖片） -->
+<!doctype html>
+<html lang="zh-Hant" class="no-js" data-theme="light">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>FATISM｜插畫作品集</title>
-<meta name="description" content="FATISM 插畫者｜作品集、周邊商品、展覽與聯絡。"/>
-<link rel="icon" href="images/favicon.png"/><link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
-<link rel="stylesheet" href="style.css"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>FATISM｜插畫作品集</title>
+  <meta name="description" content="FATISM 插畫者｜作品集、周邊商品、展覽與聯絡。"/>
+  <link rel="icon" href="images/favicon.png"/>
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<div class="header-wrap"><header class="header container" role="navigation" aria-label="主選單">
-  <div class="brand"><a href="index.html" class="brand-logo" aria-label="FATISM"></a><a href="index.html" class="brand-name">FATISM</a></div>
-  <nav class="nav" aria-label="主要導覽"><a href="index.html" aria-current="page">Home</a><a href="about.html">About</a><a href="products.html">All Products</a><a href="exhibition.html">Exhibition</a><a href="#contact">Contact</a></nav>
-  <div class="header-ops"><button class="theme-btn" id="themeBtn" aria-label="切換主題" title="切換主題"><span id="themeIcon">🌞</span></button><button class="menu-btn" id="menuBtn" aria-label="開啟選單" title="開啟選單">☰</button></div>
-</header></div>
-  
-<aside class="drawer" id="drawer" aria-hidden="true"><div class="overlay" id="overlay" aria-hidden="true"></div><div class="panel" role="dialog" aria-label="側邊選單"><div class="brand" style="margin-bottom:8px"><a href="index.html" class="brand-logo"></a><a href="index.html" class="brand-name">FATISM</a></div><a href="index.html" data-close>Home</a><a href="about.html" data-close>About</a><a href="products.html" data-close>All Products</a><a href="exhibition.html" data-close>Exhibition</a><a href="#contact" data-close>Contact</a></div></aside>
-
-<section class="hero">
-  <div class="container hero-grid">
-    <div>
-      <div class="kicker reveal">Illustration • Zine • Merch</div>
-      <h1 class="h1 reveal" style="transition-delay:.05s">FATISM — 插畫與日常的溫度</h1>
-      <p class="lead reveal" style="transition-delay:.1s">把可愛、慵懶、療癒的角色帶進日常，把每一次筆觸化為能被收藏的情緒。</p>
-      <div class="hero-actions reveal" style="transition-delay:.15s"><a class="btn" href="products.html">逛逛周邊</a><a class="btn alt" href="about.html">了解創作者</a></div>
-    </div>
-    <figure class="hero-shot reveal" style="transition-delay:.2s"><img src="images/hero-cover.jpg" alt="FATISM 代表作海報"/></figure>
+  <!-- Header -->
+  <div class="header-wrap">
+    <header class="header container" role="navigation" aria-label="主選單">
+      <div class="brand">
+        <a href="index.html" class="brand-logo" aria-label="FATISM"></a>
+        <a href="index.html" class="brand-name">FATISM</a>
+      </div>
+      <nav class="nav" aria-label="主要導覽">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="about.html">About</a>
+        <a href="products.html">All Products</a>
+        <a href="exhibition.html">Exhibition</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="header-ops">
+        <button class="theme-btn" id="themeBtn" aria-label="切換主題" title="切換主題">
+          <span id="themeIcon">🌞</span>
+        </button>
+        <button class="menu-btn" id="menuBtn" aria-label="開啟選單" title="開啟選單">☰</button>
+      </div>
+    </header>
   </div>
-</section>
 
-<section class="section">
-  <div class="container">
-    <h2 class="h2 reveal">精選作品</h2>
-    <div class="grid-3" style="margin-top:18px">
-      <!-- REPLACE START: 首頁精選作品 -->
-      <article class="card reveal"><div class="card-media"><img src="images/featured/work-01.jpg" alt="作品 01"/></div><div class="card-body"><div class="card-title">Soft Morning</div><div class="card-sub">數位插畫</div></div></article>
-      <article class="card reveal" style="transition-delay:.03s"><div class="card-media"><img src="images/featured/work-02.jpg" alt="作品 02"/></div><div class="card-body"><div class="card-title">Lazy Cat</div><div class="card-sub">角色設計</div></div></article>
-      <article class="card reveal" style="transition-delay:.06s"><div class="card-media"><img src="images/featured/work-03.jpg" alt="作品 03"/></div><div class="card-body"><div class="card-title">Coffee Time</div><div class="card-sub">海報視覺</div></div></article>
-      <!-- REPLACE END: 首頁精選作品 -->
+  <!-- Drawer -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="overlay" id="overlay" aria-hidden="true"></div>
+    <div class="panel" role="dialog" aria-label="側邊選單">
+      <div class="brand" style="margin-bottom:8px">
+        <a href="index.html" class="brand-logo"></a>
+        <a href="index.html" class="brand-name">FATISM</a>
+      </div>
+      <a href="index.html" data-close>Home</a>
+      <a href="about.html" data-close>About</a>
+      <a href="products.html" data-close>All Products</a>
+      <a href="exhibition.html" data-close>Exhibition</a>
+      <a href="contact.html" data-close>Contact</a>
     </div>
-  </div>
-</section>
+  </aside>
 
-<section id="contact" class="section">
-  <div class="container">
-    <h2 class="h2 reveal">Contact</h2>
-    <p class="lead reveal" style="transition-delay:.05s">合作洽詢請寄信或私訊 IG，提供需求、檔期與預算範圍。</p>
-    <div class="grid-3" style="align-items:start;margin-top:16px">
-      <div class="card reveal"><div class="card-body"><div class="card-title">Email</div><div class="card-sub"><a href="mailto:hello@example.com">hello@example.com</a></div></div></div>
-      <div class="card reveal" style="transition-delay:.03s"><div class="card-body"><div class="card-title">Instagram</div><div class="card-sub"><a href="https://www.instagram.com/fatism_1201/" target="_blank" rel="noopener">@fatism_1201</a></div></div></div>
-      <div class="card reveal" style="transition-delay:.06s"><div class="card-body"><div class="card-title">檔期</div><div class="card-sub">接受 2025 Q4–2026 Q1 案件；插畫、角色授權與展覽合作。</div></div></div>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="kicker reveal">Illustration • Zine • Merch</div>
+        <h1 class="h1 reveal" style="transition-delay:.05s">FATISM — 插畫與日常的溫度</h1>
+        <p class="lead reveal" style="transition-delay:.1s">
+          把可愛、慵懶、療癒的角色帶進日常，把每一次筆觸化為能被收藏的情緒。
+        </p>
+        <div class="hero-actions reveal" style="transition-delay:.15s">
+          <a class="btn" href="products.html">逛逛周邊</a>
+          <a class="btn alt" href="about.html">了解創作者</a>
+        </div>
+      </div>
+      <figure class="hero-shot reveal" style="transition-delay:.2s">
+        <img src="images/hero-cover.jpg" alt="FATISM 代表作海報"/>
+      </figure>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer class="footer"><div class="container" style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap"><div>© <span id="y"></span> FATISM. All rights reserved.</div><div class="socials"><a href="https://www.instagram.com/fatism_1201/" target="_blank" rel="noopener" aria-label="Instagram">IG</a><span aria-hidden="true">·</span><a href="mailto:hello@example.com">Email</a></div></div></footer>
-<script src="app.js"></script>
-</body></html>
+  <!-- Featured Works -->
+  <section class="section">
+    <div class="container">
+      <h2 class="h2 reveal">精選作品</h2>
+      <div class="grid-3" style="margin-top:18px">
+        <!-- 首頁精選作品 -->
+        <article class="card reveal">
+          <div class="card-media">
+            <img src="images/featured/work-01.jpg" alt="作品 01"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Soft Morning</div>
+            <div class="card-sub">數位插畫</div>
+          </div>
+        </article>
+
+        <article class="card reveal" style="transition-delay:.03s">
+          <div class="card-media">
+            <img src="images/featured/work-02.jpg" alt="作品 02"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Lazy Cat</div>
+            <div class="card-sub">角色設計</div>
+          </div>
+        </article>
+
+        <article class="card reveal" style="transition-delay:.06s">
+          <div class="card-media">
+            <img src="images/featured/work-03.jpg" alt="作品 03"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Coffee Time</div>
+            <div class="card-sub">海報視覺</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact preview（保留在首頁，但改成有圖＋導去 contact.html） -->
+  <section class="section">
+    <div class="container">
+      <div class="rule reveal">
+        <h2 class="h2">Contact</h2>
+      </div>
+      <p class="lead reveal" style="transition-delay:.05s">
+        合作洽詢請寄信或私訊 IG，提供需求、檔期與預算範圍。更多欄位請到完整聯絡頁面填寫。
+      </p>
+
+      <div class="grid-3" style="align-items:start;margin-top:16px">
+        <article class="card reveal">
+          <div class="card-media">
+            <img src="images/contact/info-card.jpg" alt="聯絡資訊圖片"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Email</div>
+            <div class="card-sub"><a href="mailto:hello@example.com">hello@example.com</a></div>
+          </div>
+        </article>
+
+        <article class="card reveal" style="transition-delay:.03s">
+          <div class="card-media">
+            <img src="images/contact/ig-card.jpg" alt="Instagram 頁面截圖示意"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Instagram</div>
+            <div class="card-sub">
+              <a href="https://www.instagram.com/fatism_1201/" target="_blank" rel="noopener">@fatism_1201</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card reveal" style="transition-delay:.06s">
+          <div class="card-media">
+            <img src="images/contact/schedule.jpg" alt="檔期資訊視覺"/>
+          </div>
+          <div class="card-body">
+            <div class="card-title">檔期</div>
+            <div class="card-sub">接受 2025 Q4–2026 Q1 案件；插畫、角色授權與展覽合作。</div>
+          </div>
+        </article>
+      </div>
+
+      <div class="band reveal" style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>需要更完整的表單欄位與檔案上傳？</div>
+        <a class="btn" href="contact.html">前往聯絡頁面</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container" style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap">
+      <div>© <span id="y"></span> FATISM. All rights reserved.</div>
+      <div class="socials">
+        <a href="https://www.instagram.com/fatism_1201/" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+        <span aria-hidden="true">·</span>
+        <a href="mailto:hello@example.com">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 建議使用 defer 以確保 DOM 準備後再執行 -->
+  <script src="app.js" defer></script>
+</body>
+</html>
 <!-- REPLACE END: index.html 首頁 -->
