@@ -124,3 +124,61 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:linear
 @media(max-width:980px){.header{height:66px}.brand-logo{width:28px;height:28px}.hero{padding:44px 0 36px}.card-body{padding:14px}}
 @media(max-width:640px){.theme-btn,.menu-btn{width:40px;height:40px;border-radius:12px}.section{padding:56px 0}.nav a::after{display:none}}
 /* REPLACE END: style.css（FATISM主題｜高質感＋動態背景） */
+/* REPLACE START: 動態 Emoji 背景（無 JS 版｜FATISM 風格） */
+/* 容器：固定在全視窗，置於背景格紙之上、內容之下 */
+.emoji-sky{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:.78;mix-blend-mode:normal}
+:root[data-theme="dark"] .emoji-sky{opacity:.55;mix-blend-mode:screen}
+
+/* 單一 emoji 基礎樣式 */
+.emoji-sky .emo{position:absolute;top:100%;will-change:transform,opacity;filter:drop-shadow(0 6px 12px rgba(0,0,0,.12));opacity:.9}
+.emoji-sky .emo.small{font-size:18px}.emoji-sky .emo.md{font-size:26px}.emoji-sky .emo.lg{font-size:36px}.emoji-sky .emo.xl{font-size:46px}
+
+/* 垂直上飄（時間越長越慢） */
+@keyframes floatY{0%{transform:translateY(0) translateX(0);opacity:0}5%{opacity:.9}95%{opacity:.9}100%{transform:translateY(-120vh) translateX(0);opacity:0}}
+/* 左右輕微擺動 */
+@keyframes sway{0%{transform:translateX(-10px)}100%{transform:translateX(10px)}}
+/* 微旋轉（增加手作感） */
+@keyframes roll{0%{rotate:-3deg}100%{rotate:3deg}}
+
+/* 每顆 emoji 都同時做三段動畫（上飄＋擺動＋微旋轉） */
+.emoji-sky .emo{animation:
+  floatY var(--dur,26s) linear var(--delay,0s) infinite,
+  sway var(--sway,4s) ease-in-out var(--delay,0s) infinite alternate,
+  roll var(--roll,6s) ease-in-out var(--delay,0s) infinite alternate
+}
+
+/* ——— 版面安全區：避免導航區域太擁擠 ——— */
+@media(min-width:981px){.emoji-sky{mask-image:linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,.25) 56px, #000 120px)}}
+
+/* ===== 佈局：用 nth-child 分散位置/延遲/速度（可自由增刪） ===== */
+.emoji-sky .emo:nth-child(1){left:4%; --delay:0s;   --dur:28s; --sway:3.8s; --roll:6.5s}
+.emoji-sky .emo:nth-child(2){left:12%;--delay:3s;   --dur:32s; --sway:4.2s; --roll:7s}
+.emoji-sky .emo:nth-child(3){left:18%;--delay:6s;   --dur:24s; --sway:3.6s; --roll:5.6s}
+.emoji-sky .emo:nth-child(4){left:25%;--delay:1.5s; --dur:30s; --sway:4.4s; --roll:6.2s}
+.emoji-sky .emo:nth-child(5){left:31%;--delay:4.5s; --dur:26s; --sway:3.2s; --roll:6.8s}
+.emoji-sky .emo:nth-child(6){left:38%;--delay:2.2s; --dur:34s; --sway:4.6s; --roll:7.4s}
+.emoji-sky .emo:nth-child(7){left:44%;--delay:5.2s; --dur:22s; --sway:3.4s; --roll:5.2s}
+.emoji-sky .emo:nth-child(8){left:50%;--delay:1.2s; --dur:36s; --sway:5s;   --roll:7.6s}
+.emoji-sky .emo:nth-child(9){left:56%;--delay:3.6s; --dur:27s; --sway:3.6s; --roll:6.2s}
+.emoji-sky .emo:nth-child(10){left:62%;--delay:6.4s;--dur:25s; --sway:3.2s; --roll:5.8s}
+.emoji-sky .emo:nth-child(11){left:68%;--delay:2.8s;--dur:31s; --sway:4.6s; --roll:7.2s}
+.emoji-sky .emo:nth-child(12){left:74%;--delay:4.1s;--dur:23s; --sway:3.4s; --roll:5.4s}
+.emoji-sky .emo:nth-child(13){left:80%;--delay:0.8s;--dur:35s; --sway:4.8s; --roll:7.8s}
+.emoji-sky .emo:nth-child(14){left:86%;--delay:5.8s;--dur:29s; --sway:3.8s; --roll:6.6s}
+.emoji-sky .emo:nth-child(15){left:92%;--delay:1.8s;--dur:33s; --sway:4.4s; --roll:7.0s}
+
+/* 顏色主題對比：暗色模式降低陰影、加亮度 */
+:root[data-theme="dark"] .emoji-sky .emo{filter:drop-shadow(0 6px 12px rgba(0,0,0,.35)) brightness(1.05)}
+
+/* 小尺寸裝置：縮小數量密度與尺寸 */
+@media(max-width:640px){
+  .emoji-sky .emo.lg,.emoji-sky .emo.xl{display:none}
+  .emoji-sky .emo{filter:drop-shadow(0 4px 8px rgba(0,0,0,.1))}
+}
+
+/* 無動作偏好：尊重使用者可存取性 */
+@media(prefers-reduced-motion:reduce){
+  .emoji-sky,.emoji-sky .emo{animation:none!important}
+  .emoji-sky .emo{opacity:.15}
+}
+/* REPLACE END: 動態 Emoji 背景（無 JS 版） */
