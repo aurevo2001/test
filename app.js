@@ -24,3 +24,33 @@ window.FatismApp=Object.freeze({setTheme:(t)=>{if(!["light","dark"].includes(t))
 document.documentElement.classList.remove("no-js");
 })();
 /* REPLACE END: app.js（FATISM 多頁共用） */
+/* REPLACE START: app.js｜Emoji 背景（純 JS 動畫引擎｜高質量全覆蓋） */
+(()=>{"use strict";
+const on=(t,e,h,o)=>t&&t.addEventListener(e,h,o),cl=(n,...c)=>n&&n.classList.add(...c),$=q=>document.querySelector(q),$$=q=>document.querySelectorAll(q),rand=(a,b)=>a+Math.random()*(b-a),randi=(a,b)=>Math.floor(a+Math.random()*(b-a+1)),R=()=>Math.random();
+const REDUCED=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const CFG={emojis:["🍳","🥚","☕️","🍓","🍞","🍪","🍰","🧋","🥐","🥑","🐣","⭐","🍯","🧈","🍵"],count:{xl:2,lg:4,md:6,sm:6},speed:[22,36],amp:[6,16],sway:[0.6,1.2],rotAmp:[2,5],mouseShiftX:8,mouseShiftY:6,scrollFactor:.03,minWidthHideXL:640,opacity:.85};
+let sky,items=[],rafId=null,lastT=performance.now(),mx=.5,my=.5,scrollY=0,paused=false,vw=innerWidth,vh=innerHeight,scaleDPR=Math.max(1,Math.min(devicePixelRatio||1,2));
+const ensureSky=()=>{sky=$(".emoji-sky");if(!sky){sky=document.createElement("div");sky.className="emoji-sky";sky.setAttribute("aria-hidden","true");document.body.prepend(sky)}sky.style.cssText="position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:.78;mix-blend-mode:normal";document.documentElement.getAttribute("data-theme")==="dark"&&(sky.style.opacity=".55",sky.style.mixBlendMode="screen")};
+const baseEmojiCss=el=>el.style.cssText+="position:absolute;will-change:transform;filter:drop-shadow(0 6px 12px rgba(0,0,0,.12));";
+const pickEmoji=idx=>CFG.emojis[idx%CFG.emojis.length];
+const densityPack=()=>{const pack=[];const pushN=(n,cls)=>{for(let i=0;i<n;i++)pack.push(cls)};pushN(CFG.count.xl,"xl");pushN(CFG.count.lg,"lg");pushN(CFG.count.md,"md");pushN(CFG.count.sm,"sm");return pack.sort(()=>Math.random()-.5)};
+const sizeFor=cls=>cls==="xl"?46:cls==="lg"?36:cls==="md"?26:18;
+const makeOne=(cls,i)=>{const el=document.createElement("span");el.textContent=pickEmoji(i);el.className=`emo ${cls}`;baseEmojiCss(el);el.style.fontSize=sizeFor(cls)+"px";el.style.opacity=CFG.opacity.toString();sky.appendChild(el);return el};
+const spawn=()=>{sky.innerHTML="";items.length=0;const classes=densityPack();classes.forEach((cls,i)=>{const el=makeOne(cls,i),size=sizeFor(cls),xPct=rand(2,98),phase=rand(0,Math.PI*2),spd=rand(CFG.speed[0],CFG.speed[1]),amp=rand(CFG.amp[0],CFG.amp[1])*(cls==="xl"?1.2:cls==="lg"?1.1:cls==="md"?1:0.9),sway=rand(CFG.sway[0],CFG.sway[1])*(cls==="xl"?0.8:1),rotA=rand(CFG.rotAmp[0],CFG.rotAmp[1]),delay=rand(0,8),y0=rand(0,1);items.push({el,cls,size,xPct,phase,spd,amp,sway,rotA,delay,y0})});if(vw<CFG.minWidthHideXL){items.forEach((it,idx)=>{if(it.cls==="xl"&&idx%2===0)it.el.style.display="none"})}};
+const layout=()=>{vw=innerWidth;vh=innerHeight};
+const step=(t)=>{const dt=Math.min(64,(t-lastT)||16);lastT=t;if(paused)return rafId=requestAnimationFrame(step);
+const mxShift=(mx-.5)*CFG.mouseShiftX,myShift=(my-.5)*CFG.mouseShiftY+(scrollY*CFG.scrollFactor);
+for(const it of items){const time=((t/1000)-it.delay);if(time<0){continue}
+const path= (time*it.spd*scaleDPR)%(vh+200);const y=vh+100-path;const xBase=it.xPct*vw/100;const x=xBase+Math.sin(time*it.sway+it.phase)*it.amp+mxShift;const rot=Math.sin(time*it.sway*0.7+it.phase)*it.rotA;it.el.style.transform=`translate3d(${x}px,${y}px,0) rotate(${rot}deg)`}
+sky.style.transform=`translate3d(${mxShift}px,${myShift}px,0)`;rafId=requestAnimationFrame(step)};
+const play=()=>{if(REDUCED)return pause();paused=false;cancelAnimationFrame(rafId);lastT=performance.now();rafId=requestAnimationFrame(step)};
+const pause=()=>{paused=true;cancelAnimationFrame(rafId)};
+const onMove=e=>{const cx=e.clientX??e.touches?.[0]?.clientX??vw/2,cy=e.clientY??e.touches?.[0]?.clientY??vh/2;mx=cx/vw;my=cy/vh};
+const onScroll=()=>{scrollY=window.scrollY||0};
+const onVis=()=>{document.hidden?pause():play()};
+const onResize=()=>{layout();if(vw<CFG.minWidthHideXL){items.forEach((it,i)=>{if(it.cls==="xl"&&i%2===0)it.el.style.display="none"})}else{items.forEach(it=>it.el.style.display="")}};
+const bootstrap=()=>{ensureSky();layout();spawn();REDUCED?pause():play();on(window,"mousemove",onMove,{passive:true});on(window,"touchmove",onMove,{passive:true});on(window,"scroll",onScroll,{passive:true});on(document,"visibilitychange",onVis);on(window,"resize",onResize)};
+bootstrap();
+window.FatismEmoji={refresh:()=>{spawn()},setEmojis:(arr)=>{if(!Array.isArray(arr)||!arr.length)return;CFG.emojis=arr;spawn()},setDensity:(d)=>{CFG.count={...CFG.count,...d};spawn()},setSpeed:(min,max)=>{CFG.speed=[min,max]},pause,play};
+})();
+/* REPLACE END: app.js｜Emoji 背景（純 JS 動畫引擎） */
