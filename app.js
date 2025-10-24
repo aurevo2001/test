@@ -7,13 +7,15 @@
    - IntersectionObserver 進場動畫
    - Lazy-load <img data-src>
    - 背景 Emoji 漂浮引擎（純 JS，無需任何 CSS 動畫）
+     * 置於內容「後面」(z-index 修正，JS 自動處理)
+     * 慢慢生成（漸進出生）、隨機起始進度、廣域延遲
      * 上飄 + 左右擺動 + 微旋轉
      * 滑鼠 / 觸控 / 滾動 視差
      * 分頁隱藏自動暫停、尊重「減少動態」
      * 小螢幕密度調整
    使用方式：
    1) 不需在 HTML 放 .emoji-sky，不需任何 emoji 相關 CSS。
-   2) 在頁尾（</body> 前）載入：<script src="/app.js?v=1" defer></script>
+   2) 在頁尾（</body> 前）載入：<script src="/app.js?v=3" defer></script>
    3) 其他 CSS/HTML 不變。
    ========================================================== */
 (() => {
@@ -164,20 +166,26 @@
 
   /* ==========================================================
      背景 Emoji 漂浮引擎（純 JS，不需要 CSS 動畫）
+     — 修正：
+       1) 置於內容後面（z-index:0 + 其他元素抬升到 2）
+       2) 慢慢生成（漸進出生）、隨機起始進度、延遲擴大
      ========================================================== */
   const EmojiEngine = (() => {
     // ---- 可調參數 ----
     const CFG = {
       emojis: ["🍳", "🥚", "☕️", "🍓", "🍞", "🍪", "🍰", "🧋", "🥐", "🥑", "🐣", "⭐", "🍯", "🧈", "🍵"],
-      count: { xl: 2, lg: 4, md: 6, sm: 6 },   // 各尺寸數量
-      speed: [22, 36],                         // 垂直速度（秒數越大越慢）
-      amp: [6, 16],                            // 左右擺幅
-      sway: [0.6, 1.2],                        // 左右擺動頻率
-      rotAmp: [2, 5],                          // 微旋轉幅度（度）
-      mouseShift: { x: 8, y: 6 },              // 視差偏移（滑鼠/觸控）
-      scrollFactor: 0.03,                      // 視差偏移（滾動）
-      hideXLUnder: 640,                        // 寬度 < 640 隱藏部分 XL
-      opacity: 0.85
+      count: { xl: 2, lg: 4, md: 6, sm: 6 },     // 目標總數（會漸進生成）
+      birthInterval: 280,                         // 每顆出生間隔（毫秒）→ 設定「慢慢來」
+      speed: [24, 40],                            // 垂直速度（秒數越大越慢）→ 稍微放慢
+      amp: [6, 16],                               // 左右擺幅
+      sway: [0.5, 1.1],                           // 左右擺動頻率（更柔）
+      rotAmp: [1.5, 4],                           // 微旋轉幅度（更細）
+      mouseShift: { x: 8, y: 6 },                 // 視差偏移（滑鼠/觸控）
+      scrollFactor: 0.03,                         // 視差偏移（滾動）
+      hideXLUnder: 640,                           // 寬度 < 640 隱藏部分 XL
+      opacity: 0.8,                               // 透明度稍降，避免壓過內容
+      startDelayRange: [0, 18],                   // 進場延遲範圍（秒）→ 更分散
+      startProgressJitter: [0, 1]                 // 初始進度 0~1（隨機放到空中某位置）
     };
 
     // ---- 內部狀態 ----
@@ -191,6 +199,7 @@
       scrollY = 0,
       vw = innerWidth,
       vh = innerHeight;
+
     const REDUCED = matchMedia?.("(prefers-reduced-motion: reduce)").matches || false;
     const DPR = Math.max(1, Math.min(devicePixelRatio || 1, 2));
 
@@ -198,7 +207,16 @@
     const rand = (a, b) => a + Math.random() * (b - a);
     const fontSizeOf = (cls) => (cls === "xl" ? 46 : cls === "lg" ? 36 : cls === "md" ? 26 : 18);
 
-    // ---- 建立容器 ----
+    // ---- 置底：把其他直屬子元素抬到上層 ----
+    function elevateContent() {
+      const kids = [...document.body.children].filter((n) => !n.classList.contains("emoji-sky"));
+      kids.forEach((el) => {
+        if (!el.style.position) el.style.position = "relative";
+        if (!el.style.zIndex) el.style.zIndex = "2";
+      });
+    }
+
+    // ---- 建立容器（置於內容後面） ----
     function ensureSky() {
       sky = document.querySelector(".emoji-sky");
       if (!sky) {
@@ -207,25 +225,22 @@
         sky.setAttribute("aria-hidden", "true");
         document.body.prepend(sky);
       }
-      // 最小必要樣式（不依賴 CSS）
+      // 容器樣式：固定、可視差、在底層
       sky.style.position = "fixed";
       sky.style.inset = "0";
-      sky.style.zIndex = "1";
+      sky.style.zIndex = "0";          // 關鍵：在內容之下
       sky.style.pointerEvents = "none";
       sky.style.overflow = "hidden";
-      sky.style.opacity = "0.78";
+      sky.style.opacity = String(CFG.opacity);
       sky.style.mixBlendMode = "normal";
       if (document.documentElement.getAttribute("data-theme") === "dark") {
-        sky.style.opacity = "0.55";
+        sky.style.opacity = "0.6";
         sky.style.mixBlendMode = "screen";
       }
     }
 
-    // ---- 產生 Emoji ----
-    function spawn() {
-      sky.innerHTML = "";
-      items.length = 0;
-
+    // ---- 目標數量（依密度） ----
+    function targetList() {
       const classes = [];
       const pushN = (n, cls) => {
         for (let i = 0; i < n; i++) classes.push(cls);
@@ -234,37 +249,59 @@
       pushN(CFG.count.lg, "lg");
       pushN(CFG.count.md, "md");
       pushN(CFG.count.sm, "small");
-      classes.sort(() => Math.random() - 0.5);
+      return classes.sort(() => Math.random() - 0.5);
+    }
 
-      classes.forEach((cls, i) => {
-        const el = document.createElement("span");
-        el.textContent = CFG.emojis[i % CFG.emojis.length];
-        el.style.position = "absolute";
-        el.style.willChange = "transform";
-        el.style.filter = "drop-shadow(0 6px 12px rgba(0,0,0,.12))";
-        el.style.opacity = String(CFG.opacity);
-        el.style.fontSize = fontSizeOf(cls) + "px";
-        sky.appendChild(el);
+    // ---- 逐顆生成（慢慢出生） ----
+    let birthTimer = null;
+    function startBirth() {
+      const classes = targetList();
+      let i = 0;
+      clearInterval(birthTimer);
+      birthTimer = setInterval(() => {
+        if (i >= classes.length) {
+          clearInterval(birthTimer);
+          return;
+        }
+        spawnOne(classes[i], i);
+        i++;
+      }, CFG.birthInterval);
+    }
 
-        items.push({
-          el,
-          cls,
-          xPct: rand(2, 98), // 2% ~ 98%
-          phase: Math.random() * Math.PI * 2,
-          spd: rand(CFG.speed[0], CFG.speed[1]),
-          amp: rand(CFG.amp[0], CFG.amp[1]) * (cls === "xl" ? 1.2 : cls === "lg" ? 1.1 : cls === "md" ? 1 : 0.9),
-          sway: rand(CFG.sway[0], CFG.sway[1]) * (cls === "xl" ? 0.8 : 1),
-          rotA: rand(CFG.rotAmp[0], CFG.rotAmp[1]),
-          delay: Math.random() * 8
-        });
-      });
+    // ---- 生成單顆 ----
+    function spawnOne(cls, idx) {
+      const el = document.createElement("span");
+      el.textContent = CFG.emojis[idx % CFG.emojis.length];
+      el.style.position = "absolute";
+      el.style.willChange = "transform";
+      el.style.filter = "drop-shadow(0 6px 12px rgba(0,0,0,.12))";
+      el.style.opacity = String(CFG.opacity);
+      el.style.fontSize = fontSizeOf(cls) + "px";
+      sky.appendChild(el);
 
-      // 小螢幕適度減量
-      if (vw < CFG.hideXLUnder) {
-        items.forEach((it, idx) => {
-          if (it.cls === "xl" && idx % 2 === 0) it.el.style.display = "none";
-        });
+      // 初始隨機：位置、速度、相位、延遲、起始進度
+      const startDelay = rand(CFG.startDelayRange[0], CFG.startDelayRange[1]); // 秒
+      const progress0 = rand(CFG.startProgressJitter[0], CFG.startProgressJitter[1]); // 0~1
+
+      const it = {
+        el,
+        cls,
+        xPct: rand(2, 98),
+        phase: Math.random() * Math.PI * 2,
+        spd: rand(CFG.speed[0], CFG.speed[1]),
+        amp: rand(CFG.amp[0], CFG.amp[1]) * (cls === "xl" ? 1.2 : cls === "lg" ? 1.1 : cls === "md" ? 1 : 0.9),
+        sway: rand(CFG.sway[0], CFG.sway[1]) * (cls === "xl" ? 0.8 : 1),
+        rotA: rand(1.5, 4),       // 更細的旋轉
+        delay: startDelay * (Math.random() < 0.5 ? 1 : Math.random()*1.8), // 擴散一點
+        progress0               // 讓一部分出生就已經在半空
+      };
+
+      // 手機適度減量（XL）
+      if (vw < CFG.hideXLUnder && cls === "xl" && idx % 2 === 0) {
+        el.style.display = "none";
       }
+
+      items.push(it);
     }
 
     // ---- 版面 ----
@@ -286,7 +323,8 @@
       const ty = (my - 0.5) * CFG.mouseShift.y + scrollY * CFG.scrollFactor;
 
       for (const it of items) {
-        const time = t / 1000 - it.delay;
+        // 將初始進度映射到路徑（讓一部分出生即在不同高度）
+        const time = t / 1000 - it.delay + it.progress0 * (vh + 200) / Math.max(1e-3, it.spd);
         if (time < 0) continue;
 
         const path = (time * it.spd * DPR) % (vh + 200); // 從下往上循環
@@ -320,10 +358,18 @@
 
     // ---- 事件 ----
     function init() {
+      // 先把內容抬到上層，再放 emoji 容器在底層
+      elevateContent();
       ensureSky();
       layout();
-      spawn();
-      REDUCED ? pause() : play();
+
+      // 清空既有、重新開始漸進生成
+      sky.innerHTML = "";
+      items = [];
+
+      // 啟動
+      if (!REDUCED) play(); else pause();
+      startBirth();
 
       on(
         window,
@@ -364,14 +410,6 @@
         "resize",
         throttle(() => {
           layout();
-          // 依寬度切換 XL 顯示策略
-          if (vw < CFG.hideXLUnder) {
-            items.forEach((it, idx) => {
-              if (it.cls === "xl" && idx % 2 === 0) it.el.style.display = "none";
-            });
-          } else {
-            items.forEach((it) => (it.el.style.display = ""));
-          }
         }, 160)
       );
     }
@@ -382,18 +420,26 @@
     return Object.freeze({
       setEmojis: (arr) => {
         if (Array.isArray(arr) && arr.length) {
+          items = [];
+          document.querySelector(".emoji-sky").innerHTML = "";
           CFG.emojis = arr;
-          spawn();
+          startBirth();
         }
       },
       setDensity: (d) => {
+        items = [];
+        document.querySelector(".emoji-sky").innerHTML = "";
         CFG.count = { ...CFG.count, ...d };
-        spawn();
+        startBirth();
       },
       setSpeed: (min, max) => {
         CFG.speed = [min, max];
       },
-      refresh: () => spawn(),
+      refresh: () => {
+        items = [];
+        document.querySelector(".emoji-sky").innerHTML = "";
+        startBirth();
+      },
       pause,
       play
     });
