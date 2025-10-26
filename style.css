@@ -124,3 +124,36 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background-image:linear
 @media(max-width:980px){.header{height:66px}.brand-logo{width:28px;height:28px}.hero{padding:44px 0 36px}.card-body{padding:14px}}
 @media(max-width:640px){.theme-btn,.menu-btn{width:40px;height:40px;border-radius:12px}.section{padding:56px 0}.nav a::after{display:none}}
 /* REPLACE END: style.css（FATISM主題｜高質感＋動態背景） */
+/* === 簽名動畫區塊（FATISM Hero 專用） === */
+.sig-wrap{display:flex;justify-content:center;align-items:center;margin-top:28px;margin-bottom:8px;animation:fadeIn 1.6s ease forwards;opacity:0}
+.sig-svg{width:min(560px,75vw);height:auto;display:block}
+.sig-stroke{
+  fill:none;
+  stroke:url(#sigGradient); /* 使用線性漸層筆觸 */
+  stroke-width:2.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:1000;
+  stroke-dashoffset:1000;
+  animation:write 6s ease-in-out forwards;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.25));
+  opacity:.85;
+}
+/* ✨ 動畫效果 */
+@keyframes write{
+  0%{stroke-dashoffset:1000;opacity:.2;transform:translateY(4px)}
+  10%{opacity:.6}
+  100%{stroke-dashoffset:0;opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{to{opacity:1}}
+
+/* 🌗 深色模式支援 */
+:root[data-theme="dark"] .sig-stroke{
+  stroke:url(#sigGradientDark);
+  filter:drop-shadow(0 2px 6px rgba(255,255,255,.15));
+}
+
+/* === 內嵌 SVG 需附加的漸層定義 === */
+.sig-svg defs{
+  /* 無需額外樣式，但保留結構 */
+}
